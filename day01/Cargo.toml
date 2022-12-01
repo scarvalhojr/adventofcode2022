@@ -1,0 +1,10 @@
+[package]
+name = "day01"
+description = "Advent of Code 2022 - Day 01"
+version = "0.1.0"
+authors = ["Sergio de Carvalho <scarvalhojr@gmail.com>"]
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+clap = { version = "4", features = ["color", "derive"]}
