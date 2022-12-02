@@ -23,3 +23,11 @@ jobs:
       env:
         RUSTFLAGS: "-Dwarnings"
       run: cargo test --locked
+
+    - name: Run Clippy
+      env:
+        RUSTFLAGS: "-Dwarnings"
+      run: cargo clippy --locked
+
+    - name: Check formatting
+      run: cargo fmt --check
