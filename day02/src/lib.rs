@@ -5,9 +5,9 @@ use Strategy::*;
 
 #[derive(Clone, Copy, Eq, PartialEq)]
 pub enum Hand {
-    Rock = 0,
-    Paper = 1,
-    Scissors = 2,
+    Rock,
+    Paper,
+    Scissors,
 }
 
 #[derive(Clone, Copy)]
@@ -25,23 +25,37 @@ enum Outcome {
 }
 
 impl Hand {
+    fn wins_over(self) -> Self {
+        match self {
+            Rock => Scissors,
+            Paper => Rock,
+            Scissors => Paper,
+        }
+    }
+
+    fn loses_to(self) -> Self {
+        match self {
+            Rock => Paper,
+            Paper => Scissors,
+            Scissors => Rock,
+        }
+    }
+
     fn play(self, other: Hand) -> Outcome {
         if self == other {
             Draw
-        } else if other as u8 == (self as u8 + 1) % 3 {
-            Lose
-        } else {
+        } else if self.wins_over() == other {
             Win
+        } else {
+            Lose
         }
     }
 
     fn choose_to(self, goal: Outcome) -> Self {
-        if goal == Draw {
-            self
-        } else if goal == Win {
-            Self::try_from((self as u8 + 1) % 3).unwrap()
-        } else {
-            Self::try_from((self as u8 + 2) % 3).unwrap()
+        match goal {
+            Win => self.loses_to(),
+            Draw => self,
+            Lose => self.wins_over(),
         }
     }
 
@@ -91,19 +105,6 @@ pub fn part2(input: &[(Hand, Strategy)]) -> i32 {
             myhand.score() + goal.score()
         })
         .sum()
-}
-
-impl TryFrom<u8> for Hand {
-    type Error = ();
-
-    fn try_from(v: u8) -> Result<Self, Self::Error> {
-        match v {
-            x if x == Rock as u8 => Ok(Rock),
-            x if x == Paper as u8 => Ok(Paper),
-            x if x == Scissors as u8 => Ok(Scissors),
-            _ => Err(()),
-        }
-    }
 }
 
 impl FromStr for Hand {

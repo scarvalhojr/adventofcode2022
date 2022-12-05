@@ -1,5 +1,5 @@
 use clap::{crate_description, Parser};
-use day02::{part1, part2, Hand, Strategy};
+use day04::{part1, part2, AssignmentPair};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::process::exit;
@@ -30,25 +30,16 @@ fn main() -> Result<(), String> {
     Ok(())
 }
 
-fn read_input(filename: &str) -> Result<Vec<(Hand, Strategy)>, String> {
+fn read_input(filename: &str) -> Result<Vec<AssignmentPair>, String> {
     let input_file = File::open(filename).map_err(|err| err.to_string())?;
 
     BufReader::new(input_file)
         .lines()
         .zip(1..)
-        .flat_map(|(line, line_num)| {
+        .map(|(line, line_num)| {
             line.map_err(|err| (line_num, err.to_string()))
-                .map(|value| {
-                    let mut entries = value.split(' ').collect::<Vec<_>>();
-                    let entry2 = entries.pop().map(|e| e.parse());
-                    let entry1 = entries.pop().map(|e| e.parse());
-                    match (entry1, entry2, entries.pop()) {
-                        (Some(Ok(hand)), Some(Ok(strategy)), None) => {
-                            Ok((hand, strategy))
-                        }
-                        _ => Err(format!("Invalid input in line {line_num}")),
-                    }
-                })
+                .and_then(|value| value.parse().map_err(|err| (line_num, err)))
         })
-        .collect::<Result<Vec<_>, _>>()
+        .collect::<Result<_, _>>()
+        .map_err(|(line_num, err)| format!("Line {}: {}", line_num, err))
 }

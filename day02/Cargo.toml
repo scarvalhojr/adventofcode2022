@@ -7,4 +7,4 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
-clap = { version = "4", features = ["color", "derive"]}
+clap = { version = "4", features = ["cargo", "color", "derive"]}
